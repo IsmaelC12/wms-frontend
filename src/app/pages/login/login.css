@@ -1,0 +1,87 @@
+.space-login-bg {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(65, 105, 255, 0.14), transparent 30%),
+    radial-gradient(circle at 80% 30%, rgba(99, 102, 241, 0.12), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.06), transparent 30%),
+    #05070d;
+}
+
+/* Capa de estrellas */
+.stars-layer {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.85) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: 90px 90px, 140px 140px;
+  background-position: 0 0, 35px 60px;
+  opacity: 0.28;
+  animation: starsMove 28s linear infinite;
+}
+
+.stars-layer-two {
+  opacity: 0.16;
+  background-size: 160px 160px, 220px 220px;
+  animation-duration: 45s;
+}
+
+/* Card del login */
+.login-panel {
+  animation: panelEnter 0.6s ease-out both;
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.login-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12),
+    transparent 35%,
+    rgba(65, 105, 255, 0.08)
+  );
+}
+
+/* Bienvenida */
+.welcome-box {
+  animation: welcomeEnter 0.55s ease-out both;
+}
+
+@keyframes starsMove {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(120px);
+  }
+}
+
+@keyframes panelEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes welcomeEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

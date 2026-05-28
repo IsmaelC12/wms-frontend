@@ -1,0 +1,171 @@
+<div class="space-login-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+
+  <!-- Estrellas -->
+  <div class="stars-layer"></div>
+  <div class="stars-layer stars-layer-two"></div>
+
+  <!-- Luces del fondo -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"></div>
+  <div class="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-indigo-500/15 blur-3xl"></div>
+  <div class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-white/5 blur-3xl"></div>
+
+  <!-- Card principal -->
+  <div class="login-panel relative w-full max-w-md bg-[#101014]/90 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-8">
+      <div class="w-16 h-16 rounded-2xl bg-[#4169ff] flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/30">
+        W
+      </div>
+
+      <h1 class="text-white text-3xl font-bold mt-5">
+        Bienvenido
+      </h1>
+
+      <p class="text-zinc-400 mt-2 text-sm text-center">
+        Accede al sistema WMS
+      </p>
+    </div>
+
+    <!-- PASO 1: LOGIN -->
+    <form *ngIf="paso === 'login'" class="space-y-5" (ngSubmit)="continuar()">
+
+      <!-- Correo -->
+      <div>
+        <label class="text-zinc-300 text-sm block mb-2">
+          Correo electrónico
+        </label>
+
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="loginData.email"
+          placeholder="correo@empresa.com"
+          class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all"
+        >
+      </div>
+
+      <!-- Contraseña -->
+      <div>
+        <label class="text-zinc-300 text-sm block mb-2">
+          Contraseña
+        </label>
+
+        <div class="relative">
+          <input
+            [type]="mostrarPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="loginData.password"
+            placeholder="********"
+            class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 pr-20 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all"
+          >
+
+          <button
+            type="button"
+            (click)="mostrarPassword = !mostrarPassword"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-zinc-400 hover:text-white transition"
+          >
+            {{ mostrarPassword ? 'Ocultar' : 'Ver' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Recordarme -->
+      <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2 text-zinc-400">
+          <input type="checkbox" class="accent-[#4169ff]">
+          Recordarme
+        </label>
+
+        <a href="#" class="text-[#4169ff] hover:text-blue-400">
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+
+      <!-- Error -->
+      <p *ngIf="error" class="text-red-400 text-sm text-center">
+        {{ error }}
+      </p>
+
+      <button
+        type="submit"
+        class="w-full bg-[#4169ff] hover:bg-[#3156e8] transition-all duration-300 text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#4169ff]/25"
+      >
+        Continuar
+      </button>
+
+    </form>
+
+    <!-- PASO 2: SELECCIONAR EMPRESA -->
+    <form *ngIf="paso === 'empresa'" class="space-y-5" (ngSubmit)="iniciarSesion()">
+
+      <div class="text-center mb-2">
+        <h2 class="text-white text-xl font-bold">
+          Selecciona tu empresa
+        </h2>
+
+        <p class="text-zinc-500 text-sm mt-1">
+          Elige la organización a la que deseas ingresar
+        </p>
+      </div>
+
+      <!-- Empresa -->
+      <div>
+        <label class="text-zinc-300 text-sm block mb-2">
+          Empresa
+        </label>
+
+        <div class="relative">
+          <select
+            name="tenantId"
+            [(ngModel)]="loginData.tenantId"
+            class="w-full appearance-none bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 text-white outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all"
+          >
+            <option value="" disabled>
+              Selecciona una empresa
+            </option>
+
+            <option
+              *ngFor="let empresa of empresas"
+              [value]="empresa.tenantId"
+            >
+              {{ empresa.nombre }}
+            </option>
+          </select>
+
+          <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500">
+            ▼
+          </span>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <p *ngIf="error" class="text-red-400 text-sm text-center">
+        {{ error }}
+      </p>
+
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full bg-[#4169ff] hover:bg-[#3156e8] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#4169ff]/25"
+      >
+        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+
+      <button
+        type="button"
+        (click)="volverLogin()"
+        class="w-full text-zinc-400 hover:text-white text-sm transition"
+      >
+        Volver al login
+      </button>
+
+    </form>
+
+    <p class="text-center text-zinc-600 text-xs mt-8">
+      WMS Frontend © 2026
+    </p>
+
+  </div>
+
+</div>
