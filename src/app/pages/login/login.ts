@@ -1,8 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize, timeout } from 'rxjs';
+
+interface ApiError {
+  message?: string;
+}
+
+interface LoginResponse {
+  accessToken?: string;
+  data?: {
+    accessToken?: string;
+    token?: string;
+  };
+  isSuccess?: boolean;
+  message?: string;
+  errors?: ApiError[];
+  statusCode?: number;
+  token?: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -11,12 +29,13 @@ import { Router } from '@angular/router';
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
-  paso: 'login' | 'empresa' = 'login';
+  private readonly loginUrl = 'https://erp-production-3ce2.up.railway.app/api/Auth';
 
   mostrarPassword = false;
   recordar = false;
   cargando = false;
   error = '';
+  empresaDropdownAbierto = false;
 
   empresas = [
     {
@@ -35,11 +54,10 @@ export class Login implements OnInit {
     tenantId: ''
   };
 
-  private loginUrl = 'https://erp-production-3ce2.up.railway.app/api/Auth';
-
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -51,18 +69,22 @@ export class Login implements OnInit {
     }
   }
 
-  continuar() {
+  seleccionarEmpresa(tenantId: string) {
+    this.loginData.tenantId = tenantId;
+    this.empresaDropdownAbierto = false;
     this.error = '';
+  }
 
-    if (!this.loginData.email || !this.loginData.password) {
-      this.error = 'Ingresa tu correo y contraseña';
-      return;
-    }
-
-    this.paso = 'empresa';
+  obtenerNombreEmpresaSeleccionada(): string {
+    const empresa = this.empresas.find(e => e.tenantId === this.loginData.tenantId);
+    return empresa ? empresa.nombre : 'Selecciona una empresa';
   }
 
   iniciarSesion() {
+    if (this.cargando) {
+      return;
+    }
+
     this.error = '';
 
     if (!this.loginData.tenantId) {
@@ -70,46 +92,124 @@ export class Login implements OnInit {
       return;
     }
 
+    if (!this.loginData.email || !this.loginData.password) {
+      this.error = 'Ingresa tu correo y contraseña';
+      return;
+    }
+
     this.cargando = true;
+    this.empresaDropdownAbierto = false;
 
-    console.log('Body enviado:', this.loginData);
+    const body = {
+      email: this.loginData.email.trim(),
+      password: this.loginData.password,
+      tenantId: this.loginData.tenantId
+    };
 
-    this.http.post<any>(this.loginUrl, this.loginData).subscribe({
-      next: (response) => {
-        this.cargando = false;
+    this.http.post<LoginResponse>(this.loginUrl, body)
+      .pipe(
+        timeout(8000),
+        finalize(() => {
+          this.cargando = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response?.isSuccess === false) {
+            this.error =
+              response.errors?.[0]?.message ||
+              response.message ||
+              'No se pudo iniciar sesión';
 
-        console.log('Login correcto:', response);
+            return;
+          }
 
-        const token = response.token || response.data?.token;
+          const token = this.obtenerToken(response);
 
-        if (token) {
+          if (!token) {
+            this.error = 'No se pudo iniciar sesión';
+            return;
+          }
+
           localStorage.setItem('token', token);
+          localStorage.setItem('tenantId', body.tenantId);
+          localStorage.setItem('email', body.email);
+
+          if (this.recordar) {
+            localStorage.setItem('recordarEmail', body.email);
+          } else {
+            localStorage.removeItem('recordarEmail');
+          }
+
+          this.router.navigate(['/dashboard']);
+        },
+
+        error: (error: unknown) => {
+          if (this.esTimeoutError(error)) {
+            this.error = 'El servidor está demorando demasiado';
+            this.cdr.detectChanges();
+            return;
+          }
+
+          if (error instanceof HttpErrorResponse) {
+            this.error = this.obtenerMensajeErrorApi(error);
+            this.cdr.detectChanges();
+            return;
+          }
+
+          this.error = 'Error al iniciar sesión';
+          this.cdr.detectChanges();
         }
-
-        localStorage.setItem('tenantId', this.loginData.tenantId);
-        localStorage.setItem('email', this.loginData.email);
-
-        if (this.recordar) {
-          localStorage.setItem('recordarEmail', this.loginData.email);
-        } else {
-          localStorage.removeItem('recordarEmail');
-        }
-
-        this.router.navigate(['/dashboard']);
-      },
-      error: (error) => {
-        this.cargando = false;
-
-        console.error('Error completo:', error);
-
-        this.error = error.error?.message || 'Correo, contraseña o empresa incorrectos';
-      }
-    });
+      });
   }
 
-  volverLogin() {
-    this.paso = 'login';
-    this.error = '';
-    this.loginData.tenantId = '';
+  private obtenerToken(response: LoginResponse | null | undefined): string | null {
+    return (
+      response?.token ||
+      response?.accessToken ||
+      response?.data?.token ||
+      response?.data?.accessToken ||
+      null
+    );
+  }
+
+  private obtenerMensajeErrorApi(error: HttpErrorResponse): string {
+    const apiError = error.error;
+
+    if (apiError?.errors?.length && apiError.errors[0]?.message) {
+      return apiError.errors[0].message;
+    }
+
+    if (apiError?.message) {
+      return apiError.message;
+    }
+
+    if (typeof apiError === 'string') {
+      return apiError;
+    }
+
+    if (error.status === 401) {
+      return 'Credenciales inválidas';
+    }
+
+    if (error.status === 404) {
+      return 'Recurso no encontrado';
+    }
+
+    if (error.status === 0) {
+      return 'No se pudo conectar con el servidor';
+    }
+
+    return 'Error al iniciar sesión';
+  }
+
+  private esTimeoutError(error: unknown): boolean {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'name' in error &&
+      error.name === 'TimeoutError'
+    );
   }
 }
