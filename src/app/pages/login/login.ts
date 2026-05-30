@@ -22,6 +22,16 @@ interface LoginResponse {
   token?: string;
 }
 
+interface CompanyResponse {
+  tenantId: string;
+  name: string;
+}
+
+interface Empresa {
+  tenantId: string;
+  nombre: string;
+}
+
 @Component({
   selector: 'app-login',
   imports: [CommonModule, FormsModule],
@@ -30,6 +40,7 @@ interface LoginResponse {
 })
 export class Login implements OnInit {
   private readonly loginUrl = 'https://erp-production-3ce2.up.railway.app/api/Auth';
+  private readonly companiesUrl = 'https://erp-production-3ce2.up.railway.app/api/Company/main';
 
   mostrarPassword = false;
   recordar = false;
@@ -37,16 +48,7 @@ export class Login implements OnInit {
   error = '';
   empresaDropdownAbierto = false;
 
-  empresas = [
-    {
-      nombre: 'Amir Corporation',
-      tenantId: '429269b3-b25c-44b6-a82a-132684c30483'
-    },
-    {
-      nombre: 'Ismael Corporation',
-      tenantId: 'f3c485a3-b265-4952-8690-8ab6a9be0423'
-    }
-  ];
+  empresas: Empresa[] = [];
 
   loginData = {
     email: '',
@@ -61,12 +63,29 @@ export class Login implements OnInit {
   ) {}
 
   ngOnInit() {
+
+    this.cargarEmpresas();
+
     const emailGuardado = localStorage.getItem('recordarEmail');
 
     if (emailGuardado) {
       this.loginData.email = emailGuardado;
       this.recordar = true;
     }
+  }
+  private cargarEmpresas() {
+  this.http.get<CompanyResponse[]>(this.companiesUrl)
+    .subscribe({
+      next: (empresasApi) => {
+        this.empresas = empresasApi.map(empresa => ({
+          tenantId: empresa.tenantId,
+          nombre: empresa.name
+        }));
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar las empresas';
+      }
+    });
   }
 
   seleccionarEmpresa(tenantId: string) {
