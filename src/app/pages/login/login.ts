@@ -153,6 +153,7 @@ export class Login implements OnInit {
 
           localStorage.setItem('token', token);
           localStorage.setItem('tenantId', body.tenantId);
+          localStorage.setItem('tenantName', this.obtenerNombreEmpresaSeleccionada());
           localStorage.setItem('email', body.email);
 
           if (this.recordar) {
