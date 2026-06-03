@@ -65,13 +65,6 @@ export class Login implements OnInit {
   ngOnInit() {
 
     this.cargarEmpresas();
-
-    const emailGuardado = localStorage.getItem('recordarEmail');
-
-    if (emailGuardado) {
-      this.loginData.email = emailGuardado;
-      this.recordar = true;
-    }
   }
   private cargarEmpresas() {
   this.http.get<CompanyResponse[]>(this.companiesUrl)
@@ -151,16 +144,7 @@ export class Login implements OnInit {
             return;
           }
 
-          localStorage.setItem('token', token);
-          localStorage.setItem('tenantId', body.tenantId);
-          localStorage.setItem('tenantName', this.obtenerNombreEmpresaSeleccionada());
-          localStorage.setItem('email', body.email);
-
-          if (this.recordar) {
-            localStorage.setItem('recordarEmail', body.email);
-          } else {
-            localStorage.removeItem('recordarEmail');
-          }
+          localStorage.setItem('token', token);       
 
           this.router.navigate(['/dashboard']);
         },

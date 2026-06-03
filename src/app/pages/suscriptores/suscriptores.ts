@@ -18,6 +18,9 @@ export class SuscriptoresComponent implements OnInit {
   creating = false;
   showForm = false;
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   error = '';
   success = '';
 
@@ -37,6 +40,31 @@ export class SuscriptoresComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarSuscriptores();
+  }
+
+  limpiarFormulario(): void {
+  this.form = {
+    name: '',
+    ruc: '',
+    companyName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  };
+
+  this.error = '';
+  this.showPassword = false;
+  this.showConfirmPassword = false;
+  }
+
+  abrirModalCrear(): void {
+  this.limpiarFormulario();
+  this.showForm = true;
+  }
+
+  cerrarModalCrear(): void {
+  this.limpiarFormulario();
+  this.showForm = false;
   }
 
   cargarSuscriptores(): void {
