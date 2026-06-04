@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { SuscriptoresComponent } from './pages/suscriptores/suscriptores';
+import { Usuarios } from './pages/usuarios/usuarios';
 
 export const routes: Routes = [
   {
@@ -18,14 +18,15 @@ export const routes: Routes = [
     component: Dashboard,
     children: [
       {
-        path: 'suscriptores',
-        component: SuscriptoresComponent
+        path: '',
+        redirectTo: 'usuarios',
+        pathMatch: 'full'
+      },
+      {
+        path: 'usuarios',
+        component: Usuarios
       }
     ]
-  },
-  {
-    path: 'suscriptores',
-    redirectTo: 'dashboard/suscriptores'
   },
   {
     path: '**',

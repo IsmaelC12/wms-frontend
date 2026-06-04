@@ -11,6 +11,7 @@ interface ApiError {
 
 interface LoginResponse {
   accessToken?: string;
+  token?: string;
   data?: {
     accessToken?: string;
     token?: string;
@@ -19,41 +20,27 @@ interface LoginResponse {
   message?: string;
   errors?: ApiError[];
   statusCode?: number;
-  token?: string;
-}
-
-interface CompanyResponse {
-  tenantId: string;
-  name: string;
-}
-
-interface Empresa {
-  tenantId: string;
-  nombre: string;
 }
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrl: './login.css'
 })
 export class Login implements OnInit {
-  private readonly loginUrl = 'https://erp-production-3ce2.up.railway.app/api/Auth';
-  private readonly companiesUrl = 'https://erp-production-3ce2.up.railway.app/api/Company/main';
+  private readonly loginUrl =
+    'https://erps-production.up.railway.app/api/platform/auth/login';
 
   mostrarPassword = false;
   recordar = false;
   cargando = false;
   error = '';
-  empresaDropdownAbierto = false;
-
-  empresas: Empresa[] = [];
 
   loginData = {
     email: '',
-    password: '',
-    tenantId: ''
+    password: ''
   };
 
   constructor(
@@ -62,63 +49,31 @@ export class Login implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-
-    this.cargarEmpresas();
-  }
-  private cargarEmpresas() {
-  this.http.get<CompanyResponse[]>(this.companiesUrl)
-    .subscribe({
-      next: (empresasApi) => {
-        this.empresas = empresasApi.map(empresa => ({
-          tenantId: empresa.tenantId,
-          nombre: empresa.name
-        }));
-      },
-      error: () => {
-        this.error = 'No se pudieron cargar las empresas';
-      }
-    });
+  ngOnInit(): void {
+    this.recordar = !!localStorage.getItem('token');
   }
 
-  seleccionarEmpresa(tenantId: string) {
-    this.loginData.tenantId = tenantId;
-    this.empresaDropdownAbierto = false;
-    this.error = '';
-  }
-
-  obtenerNombreEmpresaSeleccionada(): string {
-    const empresa = this.empresas.find(e => e.tenantId === this.loginData.tenantId);
-    return empresa ? empresa.nombre : 'Selecciona una empresa';
-  }
-
-  iniciarSesion() {
+  iniciarSesion(): void {
     if (this.cargando) {
       return;
     }
 
     this.error = '';
 
-    if (!this.loginData.tenantId) {
-      this.error = 'Selecciona una empresa';
-      return;
-    }
-
-    if (!this.loginData.email || !this.loginData.password) {
+    if (!this.loginData.email.trim() || !this.loginData.password) {
       this.error = 'Ingresa tu correo y contraseña';
       return;
     }
 
     this.cargando = true;
-    this.empresaDropdownAbierto = false;
 
     const body = {
       email: this.loginData.email.trim(),
-      password: this.loginData.password,
-      tenantId: this.loginData.tenantId
+      password: this.loginData.password
     };
 
-    this.http.post<LoginResponse>(this.loginUrl, body)
+    this.http
+      .post<LoginResponse>(this.loginUrl, body)
       .pipe(
         timeout(8000),
         finalize(() => {
@@ -144,7 +99,7 @@ export class Login implements OnInit {
             return;
           }
 
-          localStorage.setItem('token', token);       
+          this.guardarToken(token);
 
           this.router.navigate(['/dashboard']);
         },
@@ -152,23 +107,33 @@ export class Login implements OnInit {
         error: (error: unknown) => {
           if (this.esTimeoutError(error)) {
             this.error = 'El servidor está demorando demasiado';
-            this.cdr.detectChanges();
             return;
           }
 
           if (error instanceof HttpErrorResponse) {
             this.error = this.obtenerMensajeErrorApi(error);
-            this.cdr.detectChanges();
             return;
           }
 
           this.error = 'Error al iniciar sesión';
-          this.cdr.detectChanges();
         }
       });
   }
 
-  private obtenerToken(response: LoginResponse | null | undefined): string | null {
+  private guardarToken(token: string): void {
+    if (this.recordar) {
+      localStorage.setItem('token', token);
+      sessionStorage.removeItem('token');
+      return;
+    }
+
+    sessionStorage.setItem('token', token);
+    localStorage.removeItem('token');
+  }
+
+  private obtenerToken(
+    response: LoginResponse | null | undefined
+  ): string | null {
     return (
       response?.token ||
       response?.accessToken ||

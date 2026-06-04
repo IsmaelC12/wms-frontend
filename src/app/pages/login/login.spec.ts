@@ -45,8 +45,7 @@ describe('Login', () => {
   it('shows the 401 message, resets loading, and avoids navigation or token storage', () => {
     component.loginData = {
       email: 'usuario@empresa.com',
-      password: 'secreto',
-      tenantId: 'tenant-equivocado',
+      password: 'secreto'
     };
 
     component.iniciarSesion();

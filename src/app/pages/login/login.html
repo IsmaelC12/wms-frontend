@@ -28,63 +28,10 @@
     </div>
 
     <!-- Formulario de login -->
-    <form class="space-y-5" (ngSubmit)="iniciarSesion()">
-
-      <!-- Empresa personalizada -->
-      <div>
-        <label class="text-zinc-300 text-sm block mb-2">
-          Empresa
-        </label>
-
-        <div class="relative">
-          <button
-            type="button"
-            [disabled]="cargando"
-            (click)="empresaDropdownAbierto = !empresaDropdownAbierto"
-            class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 text-left outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all disabled:opacity-60 flex items-center justify-between"
-          >
-            <span
-              [class.text-zinc-500]="!loginData.tenantId"
-              [class.text-white]="!!loginData.tenantId"
-            >
-              {{ obtenerNombreEmpresaSeleccionada() }}
-            </span>
-
-            <span
-              class="text-zinc-500 transition-transform duration-200"
-              [class.rotate-180]="empresaDropdownAbierto"
-            >
-              ▼
-            </span>
-          </button>
-
-          <div
-            *ngIf="empresaDropdownAbierto"
-            class="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-white/10 bg-[#151515] shadow-2xl shadow-black/50 backdrop-blur-xl"
-          >
-            <button
-              type="button"
-              *ngFor="let empresa of empresas"
-              (click)="seleccionarEmpresa(empresa.tenantId)"
-              class="w-full px-4 py-3 text-left text-sm transition-all flex items-center justify-between hover:bg-[#4169ff]/20"
-              [class.bg-[#4169ff]/15]="loginData.tenantId === empresa.tenantId"
-              [class.text-white]="loginData.tenantId === empresa.tenantId"
-              [class.text-zinc-300]="loginData.tenantId !== empresa.tenantId"
-            >
-              <span>
-                {{ empresa.nombre }}
-              </span>
-
-              <span
-                *ngIf="loginData.tenantId === empresa.tenantId"
-                class="text-[#4169ff] font-bold"
-              >
-                ✓
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+    <form
+      class="space-y-5"
+      autocomplete="on"
+      (ngSubmit)="iniciarSesion()">
 
       <!-- Correo -->
       <div>
@@ -95,11 +42,11 @@
         <input
           type="email"
           name="email"
+          autocomplete="email"
           [(ngModel)]="loginData.email"
           placeholder="correo@empresa.com"
           [disabled]="cargando"
-          class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all disabled:opacity-60"
-        >
+          class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all disabled:opacity-60">
       </div>
 
       <!-- Contraseña -->
@@ -112,18 +59,17 @@
           <input
             [type]="mostrarPassword ? 'text' : 'password'"
             name="password"
+            autocomplete="current-password"
             [(ngModel)]="loginData.password"
             placeholder="********"
             [disabled]="cargando"
-            class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 pr-20 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all disabled:opacity-60"
-          >
+            class="w-full bg-[#181818] border border-[#333333] rounded-xl px-4 py-3 pr-20 text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition-all disabled:opacity-60">
 
           <button
             type="button"
             (click)="mostrarPassword = !mostrarPassword"
             [disabled]="cargando"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-zinc-400 hover:text-white transition disabled:opacity-50"
-          >
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-zinc-400 hover:text-white transition disabled:opacity-50">
             {{ mostrarPassword ? 'Ocultar' : 'Ver' }}
           </button>
         </div>
@@ -131,32 +77,32 @@
 
       <!-- Recordarme y recuperar contraseña -->
       <div class="flex items-center justify-between text-sm">
-        <label class="flex items-center gap-2 text-zinc-400">
+
+        <label class="flex items-center gap-2 text-zinc-400 cursor-pointer">
           <input
             type="checkbox"
             name="recordar"
             [(ngModel)]="recordar"
             [disabled]="cargando"
-            class="accent-[#4169ff]"
-          >
-          Recordarme
+            class="w-4 h-4 accent-[#4169ff]">
+
+          <span>Recordarme</span>
         </label>
 
         <a
           href="#"
           (click)="$event.preventDefault()"
-          class="text-[#4169ff] hover:text-blue-400"
-        >
+          class="text-[#4169ff] hover:text-blue-400 transition">
           ¿Olvidaste tu contraseña?
         </a>
+
       </div>
 
       <!-- Error -->
       <p
         *ngIf="error"
         aria-live="polite"
-        class="text-red-400 text-sm text-center"
-      >
+        class="text-red-400 text-sm text-center">
         {{ error }}
       </p>
 
@@ -164,8 +110,7 @@
       <button
         type="submit"
         [disabled]="cargando"
-        class="w-full bg-[#4169ff] hover:bg-[#3156e8] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#4169ff]/25"
-      >
+        class="w-full bg-[#4169ff] hover:bg-[#3156e8] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#4169ff]/25">
         {{ cargando ? 'Ingresando...' : 'Ingresar' }}
       </button>
 
