@@ -22,6 +22,8 @@ export class Usuarios implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
 
+  updatingUserId: string | null = null;
+
   error = '';
   formError = '';
   formSuccess = '';
@@ -63,9 +65,20 @@ export class Usuarios implements OnInit {
         error: (error) => {
           console.error('Error al listar usuarios:', error);
 
+          const mensajeApi = this.obtenerMensajeErrorApi(error);
+
+          if (mensajeApi) {
+            this.error = mensajeApi;
+            return;
+          }
+
           if (error?.status === 401) {
             this.error = 'Tu sesión ha expirado. Vuelve a iniciar sesión.';
             return;
+          }
+          if (error?.status === 403) {
+          this.formError = 'No tienes permisos para crear usuarios.';
+          return;
           }
 
           if (error?.name === 'TimeoutError') {
@@ -157,23 +170,15 @@ export class Usuarios implements OnInit {
         error: (error) => {
           console.error('Error al crear usuario:', error);
 
-          if (typeof error?.error === 'string') {
-            this.formError = error.error;
-            return;
-          }
+          const mensajeApi = this.obtenerMensajeErrorApi(error);
 
-          if (error?.error?.message) {
-            this.formError = error.error.message;
+          if (mensajeApi) {
+            this.formError = mensajeApi;
             return;
           }
 
           if (error?.status === 401) {
             this.formError = 'Tu sesión ha expirado. Vuelve a iniciar sesión.';
-            return;
-          }
-
-          if (error?.status === 409) {
-            this.formError = 'El correo ya se encuentra registrado.';
             return;
           }
 
@@ -188,52 +193,85 @@ export class Usuarios implements OnInit {
   }
 
   cambiarEstadoUsuario(usuario: Usuario): void {
-  if (this.updatingUserId === usuario.id) {
-    return;
+    if (this.updatingUserId === usuario.id) {
+      return;
+    }
+
+    this.error = '';
+    this.updatingUserId = usuario.id;
+
+    const nuevoEstado = !usuario.isActive;
+
+    const solicitud = usuario.isActive
+      ? this.userService.desactivarUsuario(usuario.id)
+      : this.userService.activarUsuario(usuario.id);
+
+    solicitud
+      .pipe(
+        timeout(15000),
+        finalize(() => {
+          this.updatingUserId = null;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          usuario.isActive = nuevoEstado;
+          this.cdr.detectChanges();
+        },
+
+        error: (error) => {
+          console.error('Error al cambiar estado del usuario:', error);
+
+          const mensajeApi = this.obtenerMensajeErrorApi(error);
+
+          if (mensajeApi) {
+            this.error = mensajeApi;
+            return;
+          }
+
+          if (error?.status === 401) {
+            this.error = 'Tu sesión ha expirado. Vuelve a iniciar sesión.';
+            return;
+          }
+
+          if (error?.name === 'TimeoutError') {
+            this.error = 'La API demoró demasiado en responder.';
+            return;
+          }
+
+          this.error = usuario.isActive
+            ? 'No se pudo desactivar el usuario.'
+            : 'No se pudo activar el usuario.';
+        }
+      });
   }
 
-  this.error = '';
-  this.updatingUserId = usuario.id;
+  private obtenerMensajeErrorApi(error: any): string | null {
+    const apiError = error?.error;
 
-  const nuevoEstado = !usuario.isActive;
+    if (!apiError) {
+      return null;
+    }
 
-  const solicitud = usuario.isActive
-    ? this.userService.desactivarUsuario(usuario.id)
-    : this.userService.activarUsuario(usuario.id);
+    if (typeof apiError === 'string') {
+      return apiError;
+    }
 
-  solicitud
-    .pipe(
-      timeout(15000),
-      finalize(() => {
-        this.updatingUserId = null;
-        this.cdr.detectChanges();
-      })
-    )
-    .subscribe({
-      next: () => {
-        usuario.isActive = nuevoEstado;
-        this.cdr.detectChanges();
-      },
+    if (Array.isArray(apiError) && apiError.length > 0) {
+      return apiError[0]?.message || null;
+    }
 
-      error: (error) => {
-        console.error('Error al cambiar estado del usuario:', error);
+    if (apiError?.message) {
+      return apiError.message;
+    }
 
-        if (error?.status === 401) {
-          this.error = 'Tu sesión ha expirado. Vuelve a iniciar sesión.';
-          return;
-        }
+    if (apiError?.errors?.length && apiError.errors[0]?.message) {
+      return apiError.errors[0].message;
+    }
 
-        if (error?.name === 'TimeoutError') {
-          this.error = 'La API demoró demasiado en responder.';
-          return;
-        }
-
-        this.error = usuario.isActive
-          ? 'No se pudo desactivar el usuario.'
-          : 'No se pudo activar el usuario.';
-      }
-    });
-}
+    return null;
+  }
 
   formatearFecha(fecha: string): string {
     if (!fecha) {
@@ -246,5 +284,4 @@ export class Usuarios implements OnInit {
       year: 'numeric'
     });
   }
-  updatingUserId: string | null = null;
 }
