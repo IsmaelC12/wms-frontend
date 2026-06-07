@@ -1,0 +1,141 @@
+.texto-tabla-header {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.badge-rol {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.badge-usuario {
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.10);
+}
+
+.badge-dueno {
+  color: #facc15;
+  border-color: rgba(234, 179, 8, 0.45);
+  background: rgba(234, 179, 8, 0.12);
+}
+
+/* ========================= */
+/* GRÁFICAS TIPO MONITOR */
+/* ========================= */
+
+.grafica-card {
+  opacity: 0.95;
+  overflow: visible;
+}
+
+.grafica-card path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* Línea fija de fondo */
+.linea-base {
+  opacity: 0.25;
+}
+
+/* Línea animada */
+.linea-monitor {
+  opacity: 0.95;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+/* Azul */
+.monitor-total {
+  stroke-dasharray: 24 150;
+  animation: monitorTotal 2.6s linear infinite;
+}
+
+/* Verde */
+.monitor-activos {
+  stroke-dasharray: 18 145;
+  animation: monitorActivos 2s linear infinite;
+}
+
+/* Amarillo */
+.monitor-dueno {
+  stroke-dasharray: 28 155;
+  animation: monitorDueno 3s linear infinite;
+}
+
+/* Rojo */
+.monitor-inactivos {
+  stroke-dasharray: 22 145;
+  animation: monitorInactivos 2.4s linear infinite;
+}
+
+@keyframes monitorTotal {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: -174;
+    opacity: 0.35;
+  }
+}
+
+@keyframes monitorActivos {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: -163;
+    opacity: 0.4;
+  }
+}
+
+@keyframes monitorDueno {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: -183;
+    opacity: 0.35;
+  }
+}
+
+@keyframes monitorInactivos {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    stroke-dashoffset: -167;
+    opacity: 0.4;
+  }
+}

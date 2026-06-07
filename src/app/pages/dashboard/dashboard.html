@@ -1,65 +1,88 @@
-<div class="min-h-screen bg-[#0b0b0d] text-white flex">
+<div class="flex h-screen overflow-hidden bg-[#0b0b0d] text-white">
 
-  <!-- Sidebar -->
-  <aside class="w-72 bg-[#111111] border-r border-white/10 flex flex-col">
+  <!-- SIDEBAR -->
+  <aside class="w-72 shrink-0 bg-[#111111] border-r border-white/10 flex flex-col">
 
-    <!-- Logo / encabezado -->
+    <!-- LOGO / ENCABEZADO -->
     <div class="px-6 py-7 border-b border-white/10">
       <div class="flex items-center gap-4">
+
         <div class="w-12 h-12 rounded-2xl bg-[#4169ff] flex items-center justify-center text-lg font-bold shadow-lg shadow-blue-600/20">
           W
         </div>
 
         <div>
-          <h1 class="text-xl font-bold leading-tight">WMS System</h1>
-          <p class="text-xs text-zinc-500 mt-1">Panel principal</p>
+          <h1 class="text-xl font-bold leading-tight">
+            WMS System
+          </h1>
+
+          <p class="text-xs text-zinc-500 mt-1">
+            Panel principal
+          </p>
         </div>
+
       </div>
     </div>
 
-    <!-- Menú -->
+    <!-- MENÚ -->
     <div class="flex-1 overflow-y-auto px-4 py-5">
 
       <nav class="space-y-2">
 
-        <!-- Dashboard -->
+        <!-- DASHBOARD -->
         <a
           routerLink="/dashboard"
           routerLinkActive="bg-[#4169ff] text-white shadow-lg shadow-blue-600/20"
           [routerLinkActiveOptions]="{ exact: true }"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200">
-          
+
           <span class="w-4 h-4 rounded-sm bg-white/10"></span>
-          <span class="text-sm font-medium">Dashboard</span>
+
+          <span class="text-sm font-medium">
+            Dashboard
+          </span>
         </a>
 
-        <!-- Clientes -->
+        <!-- USUARIOS -->
         <a
           routerLink="/dashboard/usuarios"
           routerLinkActive="bg-[#4169ff] text-white shadow-lg shadow-blue-600/20"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200">
-          
+
           <span class="w-4 h-4 rounded-sm bg-white/10"></span>
-          <span class="text-sm font-medium">Usuarios</span>
+
+          <span class="text-sm font-medium">
+            Usuarios
+          </span>
         </a>
 
-        <!-- Grupo visual tipo referencia -->
+        <!-- GESTIÓN -->
         <div class="pt-4">
+
           <p class="px-4 text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">
             Gestión
           </p>
 
           <div class="space-y-2">
 
+            <!-- SOLICITUDES -->
             <div class="flex items-center justify-between px-4 py-3 rounded-xl text-zinc-300 hover:bg-white/5 transition-all duration-200 cursor-pointer">
+
               <div class="flex items-center gap-3">
                 <span class="w-4 h-4 rounded-sm bg-white/10"></span>
-                <span class="text-sm font-medium">Solicitudes</span>
+
+                <span class="text-sm font-medium">
+                  Solicitudes
+                </span>
               </div>
-              <span class="text-xs text-zinc-500">▾</span>
+
+              <span class="text-xs text-zinc-500">
+                ▾
+              </span>
+
             </div>
 
-            <!-- Subitems visuales -->
+            <!-- SUBITEMS -->
             <div class="ml-6 border-l border-white/10 pl-4 space-y-2">
 
               <div class="flex items-center gap-3 px-3 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer">
@@ -78,53 +101,49 @@
               </div>
 
             </div>
+
           </div>
+
         </div>
 
-        <!-- Otro grupo visual -->
+        <!-- REPORTES -->
         <div class="pt-4">
+
           <p class="px-4 text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">
             Reportes
           </p>
 
           <div class="space-y-2">
+
             <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 cursor-pointer">
               <span class="w-4 h-4 rounded-sm bg-white/10"></span>
-              <span class="text-sm font-medium">Análisis</span>
+
+              <span class="text-sm font-medium">
+                Análisis
+              </span>
             </div>
 
             <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:text-white hover:bg-white/5 transition-all duration-200 cursor-pointer">
               <span class="w-4 h-4 rounded-sm bg-white/10"></span>
-              <span class="text-sm font-medium">Historial</span>
+
+              <span class="text-sm font-medium">
+                Historial
+              </span>
             </div>
+
           </div>
+
         </div>
 
       </nav>
+
     </div>
 
   </aside>
 
-  <!-- Contenido -->
-  <main class="flex-1 p-6">
-
-    <!-- Header -->
-    <header class="bg-[#111111] border border-white/10 rounded-2xl p-5 mb-6 flex justify-between items-center">
-      <div>
-        <h2 class="text-2xl font-bold">Bienvenido</h2>
-        <p class="text-zinc-400 text-sm">Has ingresado correctamente al sistema.</p>
-      </div>
-
-      <button class="bg-[#181818] border border-white/10 px-4 py-2 rounded-xl text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition">
-        Cerrar sesión
-      </button>
-    </header>
-
-    <!-- Módulos -->
-    <section class="bg-[#111111] border border-white/10 rounded-2xl min-h-[400px] p-6">
-      <router-outlet></router-outlet>
-    </section>
-
-  </main>
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 h-screen overflow-hidden px-5 py-4 bg-[#0b0b0d]">
+  <router-outlet></router-outlet>
+</main>
 
 </div>

@@ -1,14 +1,14 @@
-<div class="text-white">
+<div class="flex h-full flex-col text-white">
 
-  <!-- Header -->
-  <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <!-- HEADER -->
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
     <div>
       <h1 class="text-3xl font-bold">
         Usuarios
       </h1>
 
-      <p class="text-white/50 text-sm mt-1">
+      <p class="mt-1 text-sm text-white/50">
         Lista de usuarios registrados en el sistema.
       </p>
     </div>
@@ -17,7 +17,7 @@
       <button
         type="button"
         (click)="abrirModalCrear()"
-        class="bg-[#4169ff] hover:bg-blue-700 transition px-5 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-blue-600/20">
+        class="rounded-xl bg-[#4169ff] px-4 py-2.5 text-sm font-semibold shadow-lg shadow-blue-600/20 transition hover:bg-blue-700">
         + Crear usuario
       </button>
 
@@ -25,153 +25,498 @@
         type="button"
         (click)="cargarUsuarios()"
         [disabled]="loading"
-        class="bg-white/5 hover:bg-white/10 border border-white/10 disabled:opacity-60 transition px-5 py-3 rounded-xl text-sm font-semibold">
+        class="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold transition hover:bg-white/10 disabled:opacity-60">
         {{ loading ? 'Actualizando...' : 'Actualizar lista' }}
       </button>
     </div>
 
   </div>
 
-  <!-- Error al listar -->
+  <!-- RESUMEN DE USUARIOS -->
+  <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+
+    <!-- TOTAL USUARIOS -->
+    <div class="relative min-h-[96px] overflow-hidden rounded-2xl border border-white/10 bg-[#101010] p-4">
+      <div class="flex items-center gap-3 pr-20">
+
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-blue-600/20">
+          <svg class="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M17 20h5v-2a4 4 0 0 0-4-4h-1M9 20H4v-2a4 4 0 0 1 4-4h1m8-4a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-300">Total usuarios</p>
+
+          <h3 class="text-2xl font-bold text-white">
+            {{ totalUsuarios }}
+          </h3>
+
+          <p class="text-xs text-gray-400">
+            Usuarios registrados
+          </p>
+        </div>
+
+      </div>
+
+      <svg class="grafica-card pointer-events-none absolute right-6 top-1/2 h-9 w-24 -translate-y-1/2 text-blue-500" 
+        viewBox="0 0 100 40"
+        fill="none">
+
+        <!-- línea base -->
+        <path
+          class="linea-base"
+          d="M5 30 C20 30, 20 22, 35 24 S55 36, 65 18 S82 2, 95 25" />
+
+        <!-- línea animada tipo monitor -->
+        <path
+          class="linea-monitor monitor-total"
+          d="M5 30 C20 30, 20 22, 35 24 S55 36, 65 18 S82 2, 95 25" />
+      </svg>
+    </div>
+
+    <!-- ACTIVOS -->
+    <div class="relative min-h-[96px] overflow-hidden rounded-2xl border border-white/10 bg-[#101010] p-4">
+      <div class="flex items-center gap-3 pr-20">
+
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-green-600/20">
+          <svg class="h-7 w-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M15 7a4 4 0 1 0-8 0 4 4 0 0 0 8 0ZM3 21a8 8 0 0 1 12-6.9M17 18l2 2 4-4" />
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-300">Activos</p>
+
+          <h3 class="text-2xl font-bold text-white">
+            {{ usuariosActivos }}
+          </h3>
+
+          <p class="text-xs text-gray-400">
+            Usuarios activos 
+          </p>
+        </div>
+
+      </div>
+
+      <svg class="grafica-card pointer-events-none absolute right-6 top-1/2 h-9 w-24 -translate-y-1/2 text-green-500" 
+        viewBox="0 0 100 40"
+        fill="none">
+
+        <path
+         class="linea-base"
+         d="M5 25 C15 20, 22 30, 35 22 S50 28, 60 12 S75 5, 95 22" />
+
+        <path
+         class="linea-monitor monitor-activos"
+         d="M5 25 C15 20, 22 30, 35 22 S50 28, 60 12 S75 5, 95 22" />
+      </svg>
+    </div>
+
+    <!-- DUEÑO DEL SISTEMA -->
+    <div class="relative min-h-[96px] overflow-hidden rounded-2xl border border-white/10 bg-[#101010] p-4">
+      <div class="flex items-center gap-3 pr-20">
+
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-yellow-600/20">
+          <svg class="h-7 w-7 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M12 3 4 6v6c0 5 3.4 8.8 8 9 4.6-.2 8-4 8-9V6l-8-3Z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="m12 8 1.2 2.5 2.8.4-2 2 .5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-2 2.8-.4L12 8Z" />
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-300">Dueño del sistema</p>
+
+          <h3 class="text-2xl font-bold text-white">
+            {{ duenosSistema }}
+          </h3>
+
+          <p class="text-xs text-gray-400">
+            Cuenta con acceso total
+          </p>
+        </div>
+
+      </div>
+
+      <svg class="grafica-card pointer-events-none absolute right-6 top-1/2 h-9 w-24 -translate-y-1/2 text-yellow-500" 
+        viewBox="0 0 100 40"
+        fill="none">
+
+        <path
+         class="linea-base"
+         d="M5 26 C18 26, 25 15, 38 22 S52 30, 63 15 S76 6, 95 24" />
+
+        <path
+         class="linea-monitor monitor-dueno"
+         d="M5 26 C18 26, 25 15, 38 22 S52 30, 63 15 S76 6, 95 24" />
+      </svg>
+    </div>
+
+    <!-- INACTIVOS -->
+    <div class="relative min-h-[96px] overflow-hidden rounded-2xl border border-white/10 bg-[#101010] p-4">
+      <div class="flex items-center gap-3 pr-20">
+
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-red-600/20">
+          <svg class="h-7 w-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M15 7a4 4 0 1 0-8 0 4 4 0 0 0 8 0ZM3 21a8 8 0 0 1 12-6.9M18 16l4 4m0-4-4 4" />
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-300">Inactivos</p>
+
+          <h3 class="text-2xl font-bold text-white">
+            {{ usuariosInactivos }}
+          </h3>
+
+          <p class="text-xs text-gray-400">
+            Usuarios desactivados
+          </p>
+        </div>
+
+      </div>
+
+      <svg class="grafica-card pointer-events-none absolute right-6 top-1/2 h-9 w-24 -translate-y-1/2 text-red-500" 
+        viewBox="0 0 100 40"
+        fill="none">
+
+      <path
+        class="linea-base"
+        d="M5 24 H95" />
+
+      <path
+        class="linea-monitor monitor-inactivos"
+        d="M5 24 H95" />
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- ERROR AL LISTAR -->
   <div
     *ngIf="error"
-    class="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl mb-6">
+    class="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-300">
     {{ error }}
   </div>
 
-  <!-- Loading -->
+  <!-- LOADING -->
   <div
     *ngIf="loading"
     class="text-white/60">
     Cargando usuarios...
   </div>
 
-  <!-- Cards -->
-  <div
-    *ngIf="!loading && usuarios.length > 0"
-    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+  <!-- TABLA DE USUARIOS -->
+<div
+  *ngIf="!loading && usuarios.length > 0"
+  class="overflow-hidden rounded-3xl border border-white/10 bg-[#101010] shadow-2xl">
+
+  <!-- FILTROS -->
+  <div class="border-b border-white/10 bg-[#101010] p-4">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_180px_180px]">
+
+      <!-- BUSCADOR -->
+      <div class="relative">
+        <svg
+          class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.8"
+            d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" />
+        </svg>
+
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="currentPage = 1"
+          placeholder="Buscar por nombre, correo o rol..."
+          class="h-10 w-full rounded-xl border border-white/10 bg-[#080808] pl-12 pr-4 text-sm text-white outline-none transition placeholder:text-white/40 focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20">
+      </div>
+
+      <!-- FILTRO ROL -->
+      <select
+        [(ngModel)]="filtroRol"
+        (ngModelChange)="currentPage = 1"
+        class="h-10 rounded-xl border border-white/10 bg-[#080808] px-4 text-sm text-white outline-none focus:border-[#4169ff]">
+        <option value="todos">Todos los roles</option>
+        <option value="owner">Dueño del sistema</option>
+        <option value="usuario">Usuario</option>
+      </select>
+
+      <!-- FILTRO ESTADO -->
+      <select
+        [(ngModel)]="filtroEstado"
+        (ngModelChange)="currentPage = 1"
+        class="h-10 rounded-xl border border-white/10 bg-[#080808] px-4 text-sm text-white outline-none focus:border-[#4169ff]">
+        <option value="todos">Todos los estados</option>
+        <option value="activo">Activos</option>
+        <option value="inactivo">Inactivos</option>
+      </select>
+
+      <!-- LIMPIAR FILTROS -->
+      <button
+        type="button"
+        (click)="limpiarFiltros()"
+        class="h-10 rounded-xl border border-white/10 bg-white/5 text-xs font-bold uppercase tracking-widest text-white/50 transition hover:bg-white/10 hover:text-white">
+        Limpiar filtros
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ENCABEZADO TABLA -->
+  <div class="hidden grid-cols-[1.3fr_0.8fr_0.6fr_0.7fr_0.9fr] border-b border-white/10 bg-[#0c0c0c] px-5 py-3 md:grid">
+    <div class="texto-tabla-header">Usuario</div>
+    <div class="texto-tabla-header">Rol del sistema</div>
+    <div class="texto-tabla-header">Estado</div>
+    <div class="texto-tabla-header">Fecha de registro</div>
+    <div class="texto-tabla-header text-right">Acciones</div>
+  </div>
+
+  <!-- FILAS -->
+  <div class="bg-[#111111]">
 
     <div
-      *ngFor="let usuario of usuarios"
-      class="bg-[#181818] border border-white/10 rounded-3xl overflow-hidden shadow-xl flex flex-col">
+      *ngFor="let usuario of usuariosPaginados"
+      class="grid grid-cols-1 items-center gap-4 border-b border-white/5 px-5 py-3 transition hover:bg-white/5 md:grid-cols-[1.3fr_0.8fr_0.6fr_0.7fr_0.9fr]"
+      [ngClass]="{
+        'border-l-4 border-l-yellow-500 bg-yellow-500/5': esDuenoSistema(usuario)
+      }">
 
-      <!-- Parte superior -->
-      <div class="h-20 bg-gradient-to-br from-blue-500/40 via-indigo-500/30 to-white/10 relative">
+      <!-- USUARIO -->
+      <div class="flex items-center gap-4">
 
-        <div class="absolute top-4 right-4">
-          <span
-            class="text-xs px-3 py-1 rounded-full border"
-            [class.bg-green-500/10]="usuario.isActive"
-            [class.text-green-300]="usuario.isActive"
-            [class.border-green-500/30]="usuario.isActive"
-            [class.bg-red-500/10]="!usuario.isActive"
-            [class.text-red-300]="!usuario.isActive"
-            [class.border-red-500/30]="!usuario.isActive">
-            {{ usuario.isActive ? 'Activo' : 'Inactivo' }}
+        <div class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10">
+          <span class="text-sm font-bold text-white">
+            {{ obtenerIniciales(usuario.name) }}
           </span>
+
+          <span
+            class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-[#111111]"
+            [ngClass]="usuario.isActive ? 'bg-emerald-400' : 'bg-red-400'">
+          </span>
+        </div>
+
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="truncate text-sm font-bold text-white">
+              {{ usuario.name }}
+            </h3>
+
+            <span
+              *ngIf="esDuenoSistema(usuario)"
+              class="text-xs text-yellow-400">
+              👑
+            </span>
+          </div>
+
+          <p class="truncate text-xs text-white/45">
+            {{ usuario.email }}
+          </p>
         </div>
 
       </div>
 
-      <!-- Contenido -->
-      <div class="px-5 py-6 text-center flex flex-col flex-1">
+      <!-- ROL -->
+      <div>
+        <span
+          class="badge-rol inline-flex rounded-lg border px-3 py-1"
+          [ngClass]="
+            esDuenoSistema(usuario)
+              ? 'badge-dueno'
+              : 'badge-usuario'
+          ">
+          {{ obtenerRolUsuario(usuario) }}
+        </span>
+      </div>
 
-        <div class="flex-1">
-          <h2 class="text-lg font-bold leading-tight">
-            {{ usuario.name }}
-          </h2>
+      <!-- ESTADO -->
+      <div>
+        <span
+          class="inline-flex items-center gap-2 text-xs font-semibold"
+          [ngClass]="usuario.isActive ? 'text-emerald-400' : 'text-red-400'">
 
-          <p class="text-sm text-white/50 mt-2">
-            {{ usuario.email }}
-          </p>
+          <span
+            class="h-2 w-2 rounded-full"
+            [ngClass]="usuario.isActive ? 'bg-emerald-400' : 'bg-red-400'">
+          </span>
 
-          <p class="text-sm text-blue-300 mt-2">
-            {{ usuario.isOwner ? 'Dueño del sistema' : 'Usuario' }}
-          </p>
-        </div>
+          {{ usuario.isActive ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
 
-        <!-- Fecha de registro -->
-        <div class="mt-6 bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-          <div class="p-3">
-            <p class="text-xs font-semibold">
-              {{ formatearFecha(usuario.createdAt) }}
-            </p>
+      <!-- FECHA -->
+      <div class="text-sm font-semibold text-white/55">
+        {{ formatearFecha($any(usuario).createdAt) }}
+      </div>
 
-            <p class="text-[11px] text-white/40">
-              Fecha de registro
-            </p>
-          </div>
-        </div>
+      <!-- ACCIONES -->
+      <div class="flex items-center justify-start gap-2 md:justify-end">
 
-        <!-- Activar / Desactivar usuario -->
+        <!-- VER DETALLES -->
         <button
-          *ngIf="!usuario.isOwner"
+          type="button"
+          class="h-9 w-9 rounded-lg text-white/50 transition hover:bg-white/10 hover:text-white"
+          title="Ver detalles">
+          <svg class="mx-auto h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+          </svg>
+        </button>
+
+        <!-- ACTIVAR / DESACTIVAR -->
+        <button
+          *ngIf="!esDuenoSistema(usuario)"
           type="button"
           (click)="cambiarEstadoUsuario(usuario)"
           [disabled]="updatingUserId === usuario.id"
+          class="rounded-lg border px-3 py-2 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50"
           [ngClass]="
             usuario.isActive
-              ? [
-                  'bg-red-500/10',
-                  'text-red-300',
-                  'border-red-500/30',
-                  'hover:bg-red-500/20'
-                ]
-              : [
-                  'bg-green-500/10',
-                  'text-green-300',
-                  'border-green-500/30',
-                  'hover:bg-green-500/20'
-                ]
-          "
-          class="mt-4 w-full px-4 py-3 rounded-2xl border text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed">
+              ? 'border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20'
+              : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20'
+          ">
 
           {{
             updatingUserId === usuario.id
-              ? 'Actualizando...'
+              ? 'Procesando...'
               : usuario.isActive
-                ? 'Desactivar usuario'
-                : 'Activar usuario'
+                ? 'Desactivar'
+                : 'Activar'
           }}
         </button>
+
+        <!-- PROTEGIDO -->
+        <span
+          *ngIf="esDuenoSistema(usuario)"
+          class="rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-bold text-blue-300">
+          Protegido
+        </span>
 
       </div>
 
     </div>
 
+    <!-- SIN RESULTADOS -->
+    <div
+      *ngIf="usuariosFiltrados.length === 0"
+      class="py-16 text-center text-white/45">
+      No se encontraron usuarios con los filtros aplicados.
+    </div>
+
   </div>
 
-  <!-- Vacío -->
+  <!-- FOOTER TABLA -->
+  <div class="flex flex-col gap-4 border-t border-white/10 bg-[#101010] px-5 py-3 md:flex-row md:items-center md:justify-between">
+
+    <p class="text-xs text-white/40">
+      Mostrando
+      <span class="font-bold text-white">{{ usuariosPaginados.length }}</span>
+      de
+      <span class="font-bold text-white">{{ usuariosFiltrados.length }}</span>
+      usuarios registrados
+    </p>
+
+    <div class="flex flex-wrap items-center gap-3">
+
+      <button
+        type="button"
+        (click)="cambiarPagina(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="h-10 w-10 rounded-lg border border-white/10 text-white/50 transition hover:bg-white/10 hover:text-white disabled:opacity-30">
+        ‹
+      </button>
+
+      <button
+        *ngFor="let pagina of paginasVisibles"
+        type="button"
+        (click)="cambiarPagina(pagina)"
+        class="h-10 w-10 rounded-lg border text-sm font-bold transition"
+        [ngClass]="
+          pagina === currentPage
+            ? 'border-[#4169ff] bg-[#4169ff] text-white'
+            : 'border-white/10 text-white/50 hover:bg-white/10 hover:text-white'
+        ">
+        {{ pagina }}
+      </button>
+
+      <button
+        type="button"
+        (click)="cambiarPagina(currentPage + 1)"
+        [disabled]="currentPage === totalPaginas"
+        class="h-10 w-10 rounded-lg border border-white/10 text-white/50 transition hover:bg-white/10 hover:text-white disabled:opacity-30">
+        ›
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- VACÍO -->
   <div
     *ngIf="!loading && !error && usuarios.length === 0"
-    class="text-center text-white/50 mt-10">
+    class="mt-10 text-center text-white/50">
     No hay usuarios registrados.
   </div>
 
-  <!-- Modal Crear Usuario -->
+  <!-- MODAL CREAR USUARIO -->
   <div
     *ngIf="showForm"
-    class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center px-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-md"
     (click)="cerrarModalCrear()">
 
     <div
-      class="w-full max-w-3xl bg-[#151515] border border-white/10 rounded-[28px] shadow-[0_25px_80px_rgba(0,0,0,0.55)] overflow-hidden"
+      class="w-full max-w-3xl overflow-hidden rounded-[28px] border border-white/10 bg-[#151515] shadow-[0_25px_80px_rgba(0,0,0,0.55)]"
       (click)="$event.stopPropagation()">
 
-      <!-- Header modal -->
-      <div class="relative px-7 py-6 border-b border-white/10 bg-gradient-to-r from-[#1c1c1f] to-[#111111]">
+      <!-- HEADER MODAL -->
+      <div class="relative border-b border-white/10 bg-gradient-to-r from-[#1c1c1f] to-[#111111] px-7 py-6">
 
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#4169ff] via-blue-400 to-cyan-400"></div>
+        <div class="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#4169ff] via-blue-400 to-cyan-400"></div>
 
         <div class="flex items-start justify-between gap-4">
 
           <div class="flex items-center gap-5">
 
-            <div class="w-16 h-16 flex items-center justify-center">
+            <div class="flex h-16 w-16 items-center justify-center">
               <img
                 src="icons/agregar-usuario.svg"
                 alt="Icono agregar usuario"
-                class="w-14 h-14 object-contain">
+                class="h-14 w-14 object-contain">
             </div>
 
             <div>
@@ -179,7 +524,7 @@
                 Nuevo usuario
               </h2>
 
-              <p class="text-sm text-zinc-400 mt-1">
+              <p class="mt-1 text-sm text-zinc-400">
                 Completa los datos para registrar un nuevo usuario.
               </p>
             </div>
@@ -189,30 +534,30 @@
           <button
             type="button"
             (click)="cerrarModalCrear()"
-            class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 text-zinc-300 hover:text-white hover:bg-white/10 transition">
+            class="h-11 w-11 rounded-2xl border border-white/10 bg-white/5 text-zinc-300 transition hover:bg-white/10 hover:text-white">
             ✕
           </button>
 
         </div>
       </div>
 
-      <!-- Formulario -->
+      <!-- FORMULARIO -->
       <form
         autocomplete="off"
         (ngSubmit)="crearUsuario()"
         class="px-7 py-6">
 
-        <!-- Error al crear -->
+        <!-- ERROR AL CREAR -->
         <div
           *ngIf="formError"
-          class="mb-5 bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-2xl text-sm">
+          class="mb-5 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
           {{ formError }}
         </div>
 
-        <!-- Éxito al crear -->
+        <!-- ÉXITO AL CREAR -->
         <div
           *ngIf="formSuccess"
-          class="mb-5 bg-green-500/10 border border-green-500/30 text-green-300 px-4 py-3 rounded-2xl text-sm">
+          class="mb-5 rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-300">
           {{ formSuccess }}
         </div>
 
@@ -222,121 +567,105 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-          <!-- Nombre -->
+          <!-- NOMBRE -->
           <div class="space-y-2">
             <label class="text-sm text-zinc-300">
               Nombre
-              <span
-                class="text-blue-400 cursor-help"
-                title="Campo obligatorio">
-                *
-              </span>
+              <span class="cursor-help text-blue-400" title="Campo obligatorio">*</span>
             </label>
 
             <div class="relative">
               <img
                 src="icons/avatar.svg"
                 alt="Nombre"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 opacity-60 invert">
+                class="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 opacity-60 invert">
 
               <input
                 type="text"
                 name="name"
                 [(ngModel)]="form.name"
                 placeholder="Ej: Lenin Paytan Sarmiento"
-                class="w-full bg-[#09090b] border border-white/10 rounded-2xl pl-14 pr-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition">
+                class="w-full rounded-2xl border border-white/10 bg-[#09090b] py-3 pl-14 pr-4 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20">
             </div>
           </div>
 
-          <!-- Correo -->
+          <!-- CORREO -->
           <div class="space-y-2">
             <label class="text-sm text-zinc-300">
               Correo
-              <span
-                class="text-blue-400 cursor-help"
-                title="Campo obligatorio">
-                *
-              </span>
+              <span class="cursor-help text-blue-400" title="Campo obligatorio">*</span>
             </label>
 
             <div class="relative">
               <img
                 src="icons/email.svg"
                 alt="Correo"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-60 invert">
+                class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 opacity-60 invert">
 
               <input
                 type="email"
                 name="email"
                 [(ngModel)]="form.email"
                 placeholder="Ej: lenin@gmail.com"
-                class="w-full bg-[#09090b] border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition">
+                class="w-full rounded-2xl border border-white/10 bg-[#09090b] py-3 pl-12 pr-4 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20">
             </div>
           </div>
 
-          <!-- Contraseña -->
+          <!-- CONTRASEÑA -->
           <div class="space-y-2">
             <label class="text-sm text-zinc-300">
               Contraseña
-              <span
-                class="text-blue-400 cursor-help"
-                title="Campo obligatorio">
-                *
-              </span>
+              <span class="cursor-help text-blue-400" title="Campo obligatorio">*</span>
             </label>
 
             <div class="relative">
               <img
                 src="icons/candado.svg"
                 alt="Contraseña"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-60 invert">
+                class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 opacity-60 invert">
 
               <input
                 [type]="showPassword ? 'text' : 'password'"
                 name="password"
                 [(ngModel)]="form.password"
                 placeholder="Ingresa una contraseña"
-                class="w-full bg-[#09090b] border border-white/10 rounded-2xl pl-12 pr-20 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition">
+                class="w-full rounded-2xl border border-white/10 bg-[#09090b] py-3 pl-12 pr-20 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20">
 
               <button
                 type="button"
                 (click)="showPassword = !showPassword"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-400 hover:text-white transition">
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-400 transition hover:text-white">
                 {{ showPassword ? 'Ocultar' : 'Ver' }}
               </button>
             </div>
           </div>
 
-          <!-- Confirmar contraseña -->
+          <!-- CONFIRMAR CONTRASEÑA -->
           <div class="space-y-2">
             <label class="text-sm text-zinc-300">
               Confirmar contraseña
-              <span
-                class="text-blue-400 cursor-help"
-                title="Campo obligatorio">
-                *
-              </span>
+              <span class="cursor-help text-blue-400" title="Campo obligatorio">*</span>
             </label>
 
             <div class="relative">
               <img
                 src="icons/candado.svg"
                 alt="Confirmar contraseña"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-60 invert">
+                class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 opacity-60 invert">
 
               <input
                 [type]="showConfirmPassword ? 'text' : 'password'"
                 name="confirmPassword"
                 [(ngModel)]="form.confirmPassword"
                 placeholder="Repite la contraseña"
-                class="w-full bg-[#09090b] border border-white/10 rounded-2xl pl-12 pr-20 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20 transition">
+                class="w-full rounded-2xl border border-white/10 bg-[#09090b] py-3 pl-12 pr-20 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4169ff] focus:ring-2 focus:ring-[#4169ff]/20">
 
               <button
                 type="button"
                 (click)="showConfirmPassword = !showConfirmPassword"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-400 hover:text-white transition">
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-zinc-400 transition hover:text-white">
                 {{ showConfirmPassword ? 'Ocultar' : 'Ver' }}
               </button>
             </div>
@@ -344,20 +673,20 @@
 
         </div>
 
-        <!-- Botones -->
-        <div class="mt-8 pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-end gap-3">
+        <!-- BOTONES -->
+        <div class="mt-8 flex flex-col justify-end gap-3 border-t border-white/10 pt-5 sm:flex-row">
 
           <button
             type="button"
             (click)="cerrarModalCrear()"
-            class="px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/10 transition">
+            class="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-white/10 hover:text-white">
             Cancelar
           </button>
 
           <button
             type="submit"
             [disabled]="creating"
-            class="px-7 py-3 rounded-2xl bg-[#4169ff] text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20 transition">
+            class="rounded-2xl bg-[#4169ff] px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
             {{ creating ? 'Guardando...' : 'Guardar usuario' }}
           </button>
 
